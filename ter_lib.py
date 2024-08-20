@@ -4,6 +4,7 @@ import openai
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.chat_models import ChatZhipuAI
 from langchain_openai.chat_models import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from langchain.chains import ConversationChain
 from langchain.output_parsers import ResponseSchema, StructuredOutputParser
 from langchain.prompts import PromptTemplate, ChatPromptTemplate
@@ -13,11 +14,13 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 openai.api_key = os.environ["OPENAI_API_KEY"]
 zhipu_api_key = os.environ["ZHIPUAI_API_KEY"]
+anthropic_api_key = os.environ["ANTHROPIC_API_KEY"]
 # Define model endpoints
 MODEL_ENDPOINTS = {
     'openai': ['gpt-4','gpt-4o', 'gpt-4-1106-preview', 'gpt-3.5-turbo-0613', 'gpt-3.5-turbo'],
     'google': ['gemini-pro'],
-    'zhipu' : ['glm-4-0520', 'glm-4-air']
+    'zhipu' : ['glm-4-0520', 'glm-4-air'],
+    'anthropic' : ['claude-3-5-sonnet-20240620']
 }
 
 
@@ -33,6 +36,8 @@ def generate_ans(model, module, prompt, parser):
         llm = ChatGoogleGenerativeAI(model=model, verbose=True)
     elif model in MODEL_ENDPOINTS['zhipu']:
         llm = ChatZhipuAI(model=model, api_key = zhipu_api_key,verbose=True)
+    elif model in MODEL_ENDPOINTS['anthropic']:
+        llm = ChatAnthropic(model=model, api_key = anthropic_api_key, verbose=True)
     else:
         raise AssertionError("please add your model in ter_lib.py")
 
